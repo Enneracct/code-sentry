@@ -1,0 +1,23 @@
+name: Kanban Board deployaed
+
+on:
+  push:
+    branches: [ "master" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checout@v3
+      
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build to release
+        run: npm run build
+
+      - name: Deploy 🚀
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: dist 
