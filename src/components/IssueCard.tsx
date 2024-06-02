@@ -1,85 +1,85 @@
-import { Box, Heading, Flex, Text } from "@chakra-ui/react";
-import { styles } from "../utils/styles";
-import { calculateDaysAgo } from "../utils/gitHubApi";
-import { Issue } from "../types";
+import { Box, Heading, Flex, Avatar, Text } from "@chakra-ui/react";
+import { Issue } from "../types/types";
+import Label from "../ui/Label";
+import { DeleteIcon, DragHandleIcon } from "@chakra-ui/icons";
 import { useSortable } from "@dnd-kit/sortable";
-import { MdOutlineKeyboardDoubleArrowDown } from "react-icons/md";
 import { CSS } from "@dnd-kit/utilities";
-import { motion } from "framer-motion";
+import { useState } from "react";
+import { calculateDaysAgo } from "../utils/utills";
 
-interface IssueProps {
+interface IssueCardProps {
   issue: Issue;
 }
 
-const IssueCard: React.FC<IssueProps> = ({ issue }) => {
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({
-    id: issue.number,
-    data: {
-      type: "Issue",
-      issue,
-    },
-  });
+const IssueCard = ({ issue }: IssueCardProps) => {
+  const [isDisplayed, setIsDisplayed] = useState(false);
+  const { attributes, listeners, setNodeRef, transform, transition } =
+    useSortable({
+      id: issue.number,
+      data: {
+        type: "Issue",
+        issue,
+      },
+    });
 
   const style = {
-    transform: CSS.Transform.toString(transform),
     transition,
+    transform: CSS.Transform.toString(transform),
   };
-
-  if (isDragging) {
-    return (
-      <Box
-        display="flex"
-        alignItems="center"
-        justifyContent="center"
-        ref={setNodeRef}
-        style={style}
-        h="100px"
-        border="2px"
-        borderColor={styles["accent-color-one"]}
-        borderRadius="0.5rem"
-        color={styles["accent-color-one"]}
-        bgColor={styles["primary-bg"]}
-      >
-        <motion.div
-          animate={{ y: [-10, 0] }}
-          transition={{
-            repeat: Infinity,
-            duration: 0.5,
-            repeatType: "reverse",
-            ease: "easeInOut",
-          }}
-        >
-          <MdOutlineKeyboardDoubleArrowDown opacity="60%" size="48" />
-        </motion.div>
-      </Box>
-    );
-  }
 
   return (
     <Box
+      height="fit-content"
       ref={setNodeRef}
       style={style}
-      {...attributes}
-      {...listeners}
       p="1rem"
       borderRadius="0.5rem"
-      bgColor={styles["secondary-bg"]}
+      bgColor="secondary"
       mb="1rem"
+      whiteSpace="normal"
+      position="relative"
     >
-      <Heading as="h3" size="md" mb="0.5rem">
-        {issue.title}
-      </Heading>
-      <Flex justify="space-between">
-        <Text>Issue: {issue.number}</Text>
-        <Text>{calculateDaysAgo(issue.created_at)}</Text>
+      <Flex gap="1rem" mb="1rem" align="center">
+        <Avatar size="sm" src={issue.user.avatar_url} />
+        <Box>
+          <Heading as="h1" size="md" wordBreak="normal">
+            {issue.user.login} created issue #{issue.number}
+          </Heading>
+          <Text color="gray.500" fontSize="14px">
+            {calculateDaysAgo(issue.created_at)}
+          </Text>
+        </Box>
       </Flex>
+      <Flex gap="1rem" mb="1rem" flexWrap="wrap">
+        {issue.labels?.map((label, index) => (
+          <Label key={index} name={label.name} color={label.color}></Label>
+        ))}
+      </Flex>
+      <Box>{issue.title}</Box>
+      <Box
+        position="absolute"
+        top="3"
+        right="4"
+        onMouseEnter={() => setIsDisplayed(true)}
+        onMouseLeave={() => setIsDisplayed(false)}
+      >
+        {isDisplayed && (
+          <button>
+            <DeleteIcon color="gray.400" />
+          </button>
+        )}
+
+        <button
+          {...attributes}
+          {...listeners}
+          style={{
+            backgroundColor: "transparent",
+            marginLeft: "1rem",
+          }}
+        >
+          <DragHandleIcon color="gray.400" />
+        </button>
+      </Box>
     </Box>
   );
 };

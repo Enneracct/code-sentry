@@ -1,9 +1,14 @@
-import { configureStore } from "@reduxjs/toolkit";
-import issuesReducer from "./issueSlice";
+import { create } from "zustand";
+import { Issue } from "../types/types";
 
-export const store = configureStore({
-  reducer: issuesReducer,
-});
+type IssueState = {
+  issues: Issue[];
+  setIssues: (issues: Issue[]) => void;
+};
 
-export type RootState = ReturnType<typeof store.getState>;
-export type AppDispatch = typeof store.dispatch;
+export const useIssueStore = create<IssueState>((set) => ({
+  issues: [],
+  setIssues: (issues: Issue[]) => set({ issues }),
+}));
+
+export default useIssueStore;
