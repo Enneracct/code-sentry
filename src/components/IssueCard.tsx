@@ -1,10 +1,7 @@
 import { Box, Heading, Flex, Avatar, Text } from "@chakra-ui/react";
 import { Issue } from "../types/types";
 import Label from "../ui/Label";
-import { DeleteIcon, DragHandleIcon } from "@chakra-ui/icons";
-import { useSortable } from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
-import { useState } from "react";
+import { BsThreeDots } from "react-icons/bs";
 import { calculateDaysAgo } from "../utils/utills";
 
 interface IssueCardProps {
@@ -12,26 +9,9 @@ interface IssueCardProps {
 }
 
 const IssueCard = ({ issue }: IssueCardProps) => {
-  const [isDisplayed, setIsDisplayed] = useState(false);
-  const { attributes, listeners, setNodeRef, transform, transition } =
-    useSortable({
-      id: issue.number,
-      data: {
-        type: "Issue",
-        issue,
-      },
-    });
-
-  const style = {
-    transition,
-    transform: CSS.Transform.toString(transform),
-  };
-
   return (
     <Box
       height="fit-content"
-      ref={setNodeRef}
-      style={style}
       p="1rem"
       borderRadius="0.5rem"
       bgColor="secondary"
@@ -39,7 +19,7 @@ const IssueCard = ({ issue }: IssueCardProps) => {
       whiteSpace="normal"
       position="relative"
     >
-      <Flex gap="1rem" mb="1rem" align="center">
+      <Flex gap="1rem" mb="0.75rem" align="center">
         <Avatar size="sm" src={issue.user.avatar_url} />
         <Box>
           <Heading as="h1" size="md" wordBreak="normal">
@@ -50,34 +30,22 @@ const IssueCard = ({ issue }: IssueCardProps) => {
           </Text>
         </Box>
       </Flex>
-      <Flex gap="1rem" mb="1rem" flexWrap="wrap">
-        {issue.labels?.map((label, index) => (
-          <Label key={index} name={label.name} color={label.color}></Label>
-        ))}
-      </Flex>
+      {issue.labels?.length !== 0 && (
+        <Flex gap="1rem" mb="0.75rem" flexWrap="wrap">
+          {issue.labels?.map((label, index) => (
+            <Label key={index} name={label.name} color={label.color}></Label>
+          ))}
+        </Flex>
+      )}
       <Box>{issue.title}</Box>
-      <Box
-        position="absolute"
-        top="3"
-        right="4"
-        onMouseEnter={() => setIsDisplayed(true)}
-        onMouseLeave={() => setIsDisplayed(false)}
-      >
-        {isDisplayed && (
-          <button>
-            <DeleteIcon color="gray.400" />
-          </button>
-        )}
-
+      <Box position="absolute" top="3" right="4">
         <button
-          {...attributes}
-          {...listeners}
           style={{
             backgroundColor: "transparent",
             marginLeft: "1rem",
           }}
         >
-          <DragHandleIcon color="gray.400" />
+          <BsThreeDots />
         </button>
       </Box>
     </Box>

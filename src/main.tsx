@@ -12,6 +12,7 @@ const theme = extendTheme({
     bgAccent: "#343434",
     divider: "#2a2a2a",
     scrollbar: "rgb(161, 17, 203)",
+    headerButton: "#9d9ea0",
   },
 
   fonts: {

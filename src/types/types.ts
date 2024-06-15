@@ -3,6 +3,7 @@ export type Id = string | number;
 export type Column = {
   id: Id;
   title: string;
+  contents: Issue[];
 };
 
 export type Issue = {
@@ -12,6 +13,8 @@ export type Issue = {
   created_at: string;
   labels?: Label[];
   user: User;
+  assignees: User[];
+  pull_request?: [];
 };
 
 type Label = {

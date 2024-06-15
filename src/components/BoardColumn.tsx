@@ -1,18 +1,13 @@
-import { Box, Heading, Flex } from "@chakra-ui/react";
+import { Box, Heading, Flex, Text } from "@chakra-ui/react";
 import IssueCard from "./IssueCard";
-import useIssueStore from "../store/store";
-import {
-  SortableContext,
-  verticalListSortingStrategy,
-} from "@dnd-kit/sortable";
+import { Issue } from "../types/types";
 
 interface ColumnProps {
   title: string;
+  issues: Issue[];
 }
 
-function BoardColumn({ title }: ColumnProps) {
-  const { issues } = useIssueStore((state) => state);
-
+function BoardColumn({ title, issues }: ColumnProps) {
   return (
     <Flex
       direction="column"
@@ -29,12 +24,13 @@ function BoardColumn({ title }: ColumnProps) {
         bgColor="#161616"
         fontWeight="600"
         textAlign="center"
-        justifyContent="space-between"
-        alignItems="center"
+        gap="1rem"
+        alignItems="baseline"
       >
         <Heading as="h2" size="md">
           {title}
         </Heading>
+        <Text>{issues.length}</Text>
       </Flex>
       <Box
         overflowY="auto"
@@ -43,12 +39,9 @@ function BoardColumn({ title }: ColumnProps) {
         mx="0.5rem"
         px="0.5rem"
       >
-        <SortableContext items={issues} strategy={verticalListSortingStrategy}>
-          {title === "To do" &&
-            issues.map((issue) => (
-              <IssueCard issue={issue} key={issue.number}></IssueCard>
-            ))}
-        </SortableContext>
+        {issues.map((issue) => (
+          <IssueCard issue={issue} key={issue.number}></IssueCard>
+        ))}
       </Box>
       <Box p="1rem"></Box>
     </Flex>
