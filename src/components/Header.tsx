@@ -4,13 +4,21 @@ import {
   CircularProgress,
   InputGroup,
   InputLeftElement,
+  Box,
 } from "@chakra-ui/react";
 import { ChangeEvent, KeyboardEvent, useState } from "react";
 import { fetchIssues } from "../api/api";
 import { useDoneStore, useInProgressStore, useToDoStore } from "../store/store";
 import { Issue } from "../types/types";
-import CalendarButton from "../ui/CalendarButton";
-import { SearchIcon } from "@chakra-ui/icons";
+
+import {
+  BellIcon,
+  CalendarIcon,
+  ChevronDownIcon,
+  QuestionOutlineIcon,
+  SearchIcon,
+} from "@chakra-ui/icons";
+import { IconButton } from "../ui/IconButton";
 
 function Header() {
   const [url, setUrl] = useState("");
@@ -50,6 +58,7 @@ function Header() {
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>): void => {
     if (e.key === "Enter") {
       handleFetch(url);
+      setUrl("");
     }
   };
 
@@ -59,23 +68,25 @@ function Header() {
       pos="sticky"
       py="1rem"
       px="2rem"
-      justify="center"
+      justify="space-between"
       w="100%"
       bgColor="secondary"
       borderBottom="1px"
       borderLeft="1px"
       borderColor="divider"
       borderTopLeftRadius="2rem"
-      alignItems="center"
-    >
+      alignItems="center">
+      <Box />
       <Flex alignItems="center" gap="1rem">
-        <CalendarButton />
+        <IconButton
+          icon={<CalendarIcon />}
+          withIconRight={<ChevronDownIcon />}
+        />
         <InputGroup>
           <InputLeftElement
             pointerEvents="none"
             color="gray.300"
-            fontSize="1.2em"
-          >
+            fontSize="1.2em">
             <SearchIcon />
           </InputLeftElement>
           <Input
@@ -103,6 +114,10 @@ function Header() {
             />
           )}
         </InputGroup>
+      </Flex>
+      <Flex gap={4}>
+        <IconButton icon={<QuestionOutlineIcon boxSize={5} />} />
+        <IconButton icon={<BellIcon boxSize={5} />} />
       </Flex>
     </Flex>
   );
